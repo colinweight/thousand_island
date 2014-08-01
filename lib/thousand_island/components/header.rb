@@ -5,7 +5,7 @@ module ThousandIsland
       attr_reader :document, :options
 
       def initialize(document, options={})
-        @options = header_defaults.merge(options)
+        @options = defaults.merge(options)
         @document = document
       end
 
@@ -33,7 +33,7 @@ module ThousandIsland
         options[:repeated]
       end
 
-      def header_defaults
+      def defaults
         {
           header_height: 33,
           header_bottom_padding: 20,
