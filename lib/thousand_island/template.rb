@@ -1,5 +1,5 @@
 module ThousandIsland
-  class Document
+  class Template
 
     attr_reader :doc, :doc_options
 
@@ -7,7 +7,6 @@ module ThousandIsland
       setup_document_options(options)
       setup_prawn_document
     end
-
 
     def setup_prawn_document
       @doc = Prawn::Document.new(doc_options)
@@ -26,6 +25,10 @@ module ThousandIsland
         top_margin: 56,
         bottom_margin: 80
       }
+    end
+
+    def header
+      @header ||= Header.new(doc, doc_options)
     end
 
   end
