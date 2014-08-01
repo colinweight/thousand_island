@@ -4,6 +4,7 @@ module ThousandIsland
       let(:prawn_doc) { instance_double('Prawn::Document') }
       let(:header) { described_class.new(prawn_doc) }
       let(:bounds) { double(:bounds) }
+      let(:test_block) { lambda { |a| a } }
 
       it '#repeated? uses the option value' do
         expect(header.repeated?).to eq(header.options[:repeated])
@@ -26,17 +27,28 @@ module ThousandIsland
         end
 
 
-        context 'yields the block' do
-          it 'when render' do
+        context 'the block' do
+          it 'yields when render' do
             expect{ |doc| header.render(&doc) }.to yield_with_args(prawn_doc)
           end
 
-          it 'when render_all' do
-            expect{ |doc| header.render_all(&doc) }.to yield_with_args(prawn_doc)
+          it 'is passed to render when render_all' do
+            expect(header).to receive(:render)
+            header.render_all(&test_block)
           end
 
-          it 'when draw' do
-            expect{ |doc| header.draw(&doc) }.to yield_with_args(prawn_doc)
+          context 'is passed by draw to' do
+            it 'render_all when repeated?' do
+              allow(header).to receive(:repeated?) { true }
+              expect(header).to receive(:render_all)
+              header.draw(&test_block)
+            end
+
+            it 'render when not repeated?' do
+              allow(header).to receive(:repeated?) { false }
+              expect(header).to receive(:render)
+              header.draw(&test_block)
+            end
           end
         end
 
