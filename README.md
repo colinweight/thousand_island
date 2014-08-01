@@ -20,25 +20,34 @@ Or install it yourself as:
 ## Usage
 
 ### Initialise
-Running:
+The following commands will create the default structure for a Rails app:
 
     $ thousand_island init
 
     # or the shorter version:
 
     $ k_island init
-will create the directory structure for your PDF files and supporting files.
+    $ k_island init
+If you're *not* using Rails, then run:
 
-> Nb. Use k_island and thousand_island interchangeably. Clarity is good, less typing is good, here you have both options.
+    $ k_island init --rails=false
 
-The directory structure is as follows:
+> Nb. Use `k_island` and `thousand_island` interchangeably. Clarity is good, less typing is good, here you have both options.
 
-    ├── app/
-    │   └── pdf_builders/
-    │       └── templates/
-    │           └── .keep
-    │       └── support/
-    │           └── .keep
+The directory structure for a Rails app is as follows:
+
+```
+app/
+└── pdf_builders/
+    ├── .keep
+    ├── support/
+    │   └── .keep
+    └── templates/
+        └── .keep
+```
+For a non-Rails application, the `lib` directory is used instead of the `app` directory.
+
+The intended use of each of the directories is:
 
 * **app/pdf_builders/** - Your main classes that generate the actual pdf file go in this directory
 * **app/pdf_builders/templates** - The template files that are reused and contain the style information belong here

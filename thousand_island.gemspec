@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Colin Weight"]
   spec.email         = ["colin@colinweight.com.au"]
   spec.description   = %q{Dressing for Prawn}
-  spec.summary       = %q{A library that helps with repetitive tasks for common layouts in PDFs.}
+  spec.summary       = %q{A library that helps with common layout elements in PDFs.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
