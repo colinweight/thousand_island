@@ -28,7 +28,7 @@ module ThousandIsland
       end
 
       def repeated?
-        options[:repeated]
+        raise NotImplementedError
       end
 
       def defaults

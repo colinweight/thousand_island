@@ -5,6 +5,10 @@ module ThousandIsland
       let(:bounds) { double(:bounds) }
       let(:header) { described_class.new(prawn_doc) }
 
+      it '#repeated? uses the option value' do
+        expect(header.repeated?).to eq(header.options[:header_repeated])
+      end
+
       context 'interactions with Prawn' do
 
         before :each do

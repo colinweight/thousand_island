@@ -5,10 +5,6 @@ module ThousandIsland
       let(:component) { described_class.new(prawn_doc) }
       let(:test_block) { lambda { |a| a } }
 
-      it '#repeated? uses the option value' do
-        expect(component.repeated?).to eq(component.options[:repeated])
-      end
-
       context 'interactions with Prawn' do
 
         before :each do

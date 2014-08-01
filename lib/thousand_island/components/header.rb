@@ -8,12 +8,16 @@ module ThousandIsland
         end
       end
 
+      def repeated?
+        options[:header_repeated]
+      end
+
       def defaults
         {
           header_height: 33,
           header_bottom_padding: 20,
           title: '',
-          repeated: true
+          header_repeated: true
         }
       end
     end
