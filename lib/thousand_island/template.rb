@@ -41,6 +41,27 @@ module ThousandIsland
       @pdf_options = defaults.merge(options)
     end
 
+    def style_sheet
+      @style_sheet ||= @@style_sheet_klass.new
+    end
+
+    #Respond to methods that relate to the style_sheet known styles
+    def method_missing(method_name, *arguments, &block)
+      if style_sheet.known_styles.include?(method_name)
+        style = style_sheet.send("#{method_name}_style")
+        pdf.text *arguments, style
+      elsif style_sheet.respond_to?("#{method_name.to_s}")
+        style_sheet.send("#{method_name.to_s}")
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(method_name, *)
+      return true if style_sheet.known_styles.include?(method_name)
+      style_sheet.respond_to?(method_name) || super
+    end
+
   private
     def setup_prawn_document
       @pdf = Prawn::Document.new(pdf_options)
@@ -53,6 +74,13 @@ module ThousandIsland
     def footer_obj
       @footer ||= Components::Footer.new(pdf, pdf_options[:footer])
     end
+
+    def self.uses_style_sheet(klass)
+      @@style_sheet_klass = klass
+    end
+    uses_style_sheet ThousandIsland::StyleSheet
+
+
 
   end
 end

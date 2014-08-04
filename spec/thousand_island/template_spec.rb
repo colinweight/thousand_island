@@ -11,6 +11,43 @@ module ThousandIsland
         expected = { op_one: 1, op_two: 2, op_three: 3 }
         expect(subject.pdf_options).to eq(expected)
       end
+
+    end
+
+    context 'Style Sheet' do
+      it 'is the default' do
+        expect(subject.style_sheet).to be_a(StyleSheet)
+      end
+      context 'adds method to template' do
+        it 'h1' do
+          expect(subject.respond_to?(:h1)).to be true
+        end
+
+        it 'h2' do
+          expect(subject.respond_to?(:h2)).to be true
+        end
+
+        it 'h3' do
+          expect(subject.respond_to?(:h3)).to be true
+        end
+
+        it 'h3_style' do
+          expect(subject.respond_to?(:h3_style)).to be true
+        end
+      end
+
+      it 'adds text to the pdf' do
+        pdf = instance_double('Prawn::Document')
+        allow(subject).to receive(:pdf) { pdf }
+        expected = 'Test Text'
+        style = subject.h1_style
+        expect(pdf).to receive(:text).with(expected, style)
+        subject.h1 expected
+      end
+
+      it 'does not add an h9 method' do
+        expect(subject.respond_to?(:h9)).to be false
+      end
     end
 
     context 'Header' do
@@ -26,12 +63,12 @@ module ThousandIsland
         subject.draw_header
       end
 
-      it 'does not call self.header if not exists' do
+      it 'does not call header if not exists' do
         expect(subject).to_not receive(:header)
         subject.draw_header
       end
 
-      it 'calls self header when it exists' do
+      it 'calls header when it exists' do
         described_class.send(:define_method, :header) {}
         template = described_class.new
         expect(template).to receive(:header)
@@ -52,12 +89,12 @@ module ThousandIsland
         subject.draw_footer
       end
 
-      it 'does not call self.footer if not exists' do
+      it 'does not call footer if not exists' do
         expect(subject).to_not receive(:footer)
         subject.draw_footer
       end
 
-      it 'calls self footer when it exists' do
+      it 'calls footer when it exists' do
         described_class.send(:define_method, :footer) {}
         template = described_class.new
         expect(template).to receive(:footer)
@@ -66,12 +103,12 @@ module ThousandIsland
     end
 
     context 'Body' do
-      it 'does not call self.body if not exists' do
+      it 'does not call body if not exists' do
         expect(subject).to_not receive(:body)
         subject.draw_footer
       end
 
-      it 'calls self body when it exists' do
+      it 'calls body when it exists' do
         described_class.send(:define_method, :body) {}
         template = described_class.new
         expect(template).to receive(:body)

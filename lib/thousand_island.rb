@@ -2,8 +2,9 @@ require "thousand_island/version"
 
 require "prawn"
 
-require "thousand_island/builder"
+require "thousand_island/style_sheet"
 require "thousand_island/template"
+require "thousand_island/builder"
 
 require "thousand_island/components"
 require "thousand_island/components/base"
