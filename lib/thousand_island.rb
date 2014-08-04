@@ -11,6 +11,8 @@ require "thousand_island/components/header"
 require "thousand_island/components/footer"
 
 module ThousandIsland
+  class Error < StandardError; end
+  class TemplateRequiredError < Error; end
 end
 
 KIsland = ThousandIsland
