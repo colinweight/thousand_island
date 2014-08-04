@@ -31,8 +31,12 @@ module ThousandIsland
         raise NotImplementedError
       end
 
-      def defaults
+      def self.defaults
         {}
+      end
+
+      def defaults
+        self.class.defaults
       end
 
 

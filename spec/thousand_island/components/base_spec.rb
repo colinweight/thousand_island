@@ -5,6 +5,14 @@ module ThousandIsland
       let(:component) { described_class.new(prawn_doc) }
       let(:test_block) { lambda { |a| a } }
 
+      it 'merges defaults and passed options on new' do
+        options = { op_one: 1, op_two: 2 }
+        allow(described_class).to receive(:defaults) { { op_two: 22, op_three: 3 } }
+        component = described_class.new(prawn_doc, options)
+        expected = { op_one: 1, op_two: 2, op_three: 3 }
+        expect(component.options).to eq(expected)
+      end
+
       context 'interactions with Prawn' do
 
         before :each do
