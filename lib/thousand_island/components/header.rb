@@ -3,21 +3,21 @@ module ThousandIsland
     class Header < Base
       
       def render
-        document.bounding_box([0, document.bounds.height], width: document.bounds.width, height: options[:header_height]) do
-          yield(document) if block_given?
+        document.bounding_box([0, document.bounds.height], width: document.bounds.width, height: options[:height]) do
+          yield if block_given?
         end
       end
 
       def repeated?
-        options[:header_repeated]
+        options[:repeated]
       end
 
-      def defaults
+      def self.defaults
         {
-          header_height: 33,
-          header_bottom_padding: 20,
+          height: 33,
+          bottom_padding: 20,
           title: '',
-          header_repeated: true
+          repeated: true
         }
       end
     end

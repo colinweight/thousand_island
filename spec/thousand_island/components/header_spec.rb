@@ -6,7 +6,8 @@ module ThousandIsland
       let(:header) { described_class.new(prawn_doc) }
 
       it '#repeated? uses the option value' do
-        expect(header.repeated?).to eq(header.options[:header_repeated])
+        header.options[:repeated] = true
+        expect(header.repeated?).to be true
       end
 
       context 'interactions with Prawn' do
@@ -18,23 +19,10 @@ module ThousandIsland
           allow(prawn_doc).to receive(:bounds) { bounds }
         end
 
-        context 'options' do
-          context 'defaults' do
-            it 'sizes the box' do
-              h = header.options[:header_height]
-              expect(prawn_doc).to receive(:bounding_box).with([0, std_doc_height], width: std_doc_width, height: h)
-              header.render
-            end
-          end
-
-          context 'custom' do
-            let(:header) { described_class.new(prawn_doc, { header_height: 20 }) }
-
-            it 'sizes the box' do
-              expect(prawn_doc).to receive(:bounding_box).with([0, std_doc_height], width: std_doc_width, height: 20)
-              header.render
-            end
-          end
+        it 'sizes the box' do
+          h = header.options[:height]
+          expect(prawn_doc).to receive(:bounding_box).with([0, std_doc_height], width: std_doc_width, height: h)
+          header.render
         end
       end
 
