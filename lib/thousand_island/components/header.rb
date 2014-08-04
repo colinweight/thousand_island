@@ -3,7 +3,7 @@ module ThousandIsland
     class Header < Base
       
       def render
-        document.bounding_box([0, document.bounds.height], width: document.bounds.width, height: options[:height]) do
+        pdf.bounding_box([0, pdf.bounds.height], width: pdf.bounds.width, height: options[:height]) do
           yield if block_given?
         end
       end

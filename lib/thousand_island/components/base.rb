@@ -2,11 +2,11 @@ module ThousandIsland
   module Components
     class Base
 
-      attr_reader :document, :options
+      attr_reader :pdf, :options
 
-      def initialize(document, options={})
+      def initialize(pdf, options={})
         @options = defaults.merge(options)
-        @document = document
+        @pdf = pdf
       end
 
       def draw(&block)
@@ -18,7 +18,7 @@ module ThousandIsland
       end
 
       def render_all(&block)
-        document.repeat :all do
+        pdf.repeat :all do
           render &block
         end
       end
