@@ -3,21 +3,10 @@ module ThousandIsland
 
     context 'template method' do
 
-      it 'does not exist initially' do
-        klass = described_class.dup
-        expect(klass.new).to_not respond_to(:template)
-      end
-
-      it 'exists after #uses_template' do
-        klass = described_class.dup
-        klass.uses_template(Class)
-        expect(klass.new).to respond_to(:template)
-      end
-
       it 'instantiates a new instance of the template_class' do
         klass = described_class.dup
         template = double(:template)
-        expect(template).to receive(:new).with(klass.defaults) { template }
+        expect(template).to receive(:new).with({}) { template }
         expect(template).to receive(:pdf) {}
         klass.uses_template(template)
         klass.new.template

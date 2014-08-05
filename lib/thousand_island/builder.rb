@@ -3,8 +3,21 @@ module ThousandIsland
 
     attr_reader :pdf
 
-    def initialize(data={})
+    class << self
+      attr_writer :template_klass
 
+      def template_klass
+        raise TemplateRequiredError.new 'Builders must set a Template class with #uses_template in the Class body' if @template_klass.nil?
+        @template_klass
+      end
+
+      def uses_template(klass)
+        self.template_klass = klass
+      end
+    end
+
+
+    def initialize(data={})
     end
 
     def filename
@@ -12,7 +25,6 @@ module ThousandIsland
     end
 
     def build
-      raise TemplateRequiredError.new 'Your Builder must define a Template class' unless self.respond_to? :template
       #body first so we know how many pages for repeated components
       draw_body
       draw_header
@@ -38,23 +50,15 @@ module ThousandIsland
       end
     end
 
-    def self.defaults
+    def defaults
       {}
     end
 
-    def defaults
-      self.defaults
-    end
-
-    private
-    def self.uses_template(template_class)
-      define_method(:template) do
-        template = instance_variable_get("@template")
-        return template if template
-        template = template_class.new(self.class.defaults)
-        instance_variable_set("@template", template)
-        instance_variable_set("@pdf", template.pdf)
-        return template
+    def template
+      @template ||= begin
+        template = self.class.template_klass.new(self.defaults)
+        @pdf = template.pdf
+        template
       end
     end
 

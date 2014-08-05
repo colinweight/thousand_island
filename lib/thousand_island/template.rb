@@ -3,6 +3,17 @@ module ThousandIsland
 
     attr_reader :pdf, :pdf_options
 
+    class << self
+      attr_writer :style_sheet_klass
+      def style_sheet_klass
+        @style_sheet_klass ||= ThousandIsland::StyleSheet
+      end
+    end
+
+    def style_sheet
+      @style_sheet ||= self.class.style_sheet_klass.new
+    end
+
     def initialize(options={})
       setup_document_options(options)
       setup_prawn_document
@@ -22,18 +33,18 @@ module ThousandIsland
     end
 
     def draw_body(&block)
-      body &block if respond_to? :body
+      body_content &block if respond_to? :body_content
     end
 
     def draw_header(&block)
       header_obj.draw do
-        header &block if respond_to? :header
+        header_content &block if respond_to? :header_content
       end if pdf_options[:header][:render]
     end
 
     def draw_footer(&block)
       footer_obj.draw do
-        footer &block if respond_to? :footer
+        footer_content &block if respond_to? :footer_content
       end if pdf_options[:footer][:render]
     end
 
@@ -41,13 +52,9 @@ module ThousandIsland
       @pdf_options = defaults.merge(options)
     end
 
-    def style_sheet
-      @style_sheet ||= @@style_sheet_klass.new
-    end
-
     #Respond to methods that relate to the style_sheet known styles
     def method_missing(method_name, *arguments, &block)
-      if style_sheet.known_styles.include?(method_name)
+      if style_sheet.available_styles.include?(method_name)
         style = style_sheet.send("#{method_name}_style")
         pdf.text *arguments, style
       elsif style_sheet.respond_to?("#{method_name.to_s}")
@@ -58,9 +65,10 @@ module ThousandIsland
     end
 
     def respond_to_missing?(method_name, *)
-      return true if style_sheet.known_styles.include?(method_name)
+      return true if style_sheet.available_styles.include?(method_name)
       style_sheet.respond_to?(method_name) || super
     end
+
 
   private
     def setup_prawn_document
@@ -72,15 +80,14 @@ module ThousandIsland
     end
 
     def footer_obj
-      @footer ||= Components::Footer.new(pdf, pdf_options[:footer])
+      @footer ||= begin
+        pdf_options[:footer][:style] = footer_style
+        Components::Footer.new(pdf, pdf_options[:footer])
+      end
     end
 
     def self.uses_style_sheet(klass)
-      @@style_sheet_klass = klass
+      self.style_sheet_klass = klass
     end
-    uses_style_sheet ThousandIsland::StyleSheet
-
-
-
   end
 end

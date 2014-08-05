@@ -1,21 +1,16 @@
 module ThousandIsland
   class StyleSheet
 
-    def self.known_styles
-      [:default, :h1, :h2, :h3, :h4, :h5, :h6]
-    end
+    class << self
+      attr_writer :available_styles
 
-    #Create a method for each of the known styles that returns the hash
-    known_styles.each do |style|
-      style_method_name = "#{style.to_s}_style"
-      defaults_method_name = "#{style.to_s}_defaults"
-      define_method(style_method_name.to_sym) do
-        method(defaults_method_name.to_sym).()
+      def available_styles
+        @available_styles ||= []
       end
     end
 
-    def known_styles
-      self.class.known_styles
+    def available_styles
+      self.class.available_styles
     end
 
     def defaults
@@ -70,6 +65,37 @@ module ThousandIsland
           size: defaults[:size] * 0.85,
           style: :italic,
       })
+    end
+
+    def footer_defaults
+      defaults.merge({
+         size: defaults[:size] * 0.8,
+         color: '666666',
+         align: :center,
+     })
+    end
+
+    def default_style
+      defaults.merge({
+        font_size: defaults[:size],
+        styles: [defaults[:style]],
+      })
+    end
+
+    #Create a method for each of the known styles from the defaults
+    instance_methods.grep(/_defaults$/).each do |method_name|
+      method_name = method_name.to_s
+      style = method_name.sub('_defaults', '')
+      available_styles << style.to_sym
+      style_method_name = "#{style}_style"
+      define_method(style_method_name) do
+        defaults = method(method_name).()
+        new_keys = {
+            font_size: defaults[:size],
+            styles: [defaults[:style]],
+        }
+        defaults.merge(new_keys)
+      end
     end
 
   end
