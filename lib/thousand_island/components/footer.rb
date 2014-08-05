@@ -36,6 +36,9 @@ module ThousandIsland
       def col2
         start = col1_width
         pdf.bounding_box([start, 0], width: col2_width, height: options[:height]) do
+          options[:style].each do |k,v|
+            pdf.send(k, v) if pdf.respond_to?(k)
+          end
           yield if block_given?
         end
       end
@@ -43,8 +46,12 @@ module ThousandIsland
       def col3
         start = col1_width + col2_width
         pdf.bounding_box([start, 0], width: col3_width, height: options[:height]) do
-          pdf.number_pages numbering_string, options[:numbering_options] if number_pages?
+          pdf.number_pages numbering_string, numbering_options if number_pages?
         end
+      end
+
+      def numbering_options
+        options[:style].merge(options[:numbering_options])
       end
 
       def repeated?
@@ -58,7 +65,8 @@ module ThousandIsland
           repeated: true,
           numbering_options: numbering_options,
           number_pages: true,
-          numbering_string: '<page>'
+          numbering_string: '<page>',
+          style: {},
         }
       end
 
@@ -66,7 +74,6 @@ module ThousandIsland
         {
           align: :right,
           start_count_at: 1,
-
         }
       end
     end
