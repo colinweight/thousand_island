@@ -63,15 +63,15 @@ module ThousandIsland
         subject.draw_header
       end
 
-      it 'does not call header if not exists' do
-        expect(subject).to_not receive(:header)
+      it 'does not call header_content if not exists' do
+        expect(subject).to_not receive(:header_content)
         subject.draw_header
       end
 
-      it 'calls header when it exists' do
-        described_class.send(:define_method, :header) {}
+      it 'calls header_content when it exists' do
+        described_class.send(:define_method, :header_content) {}
         template = described_class.new
-        expect(template).to receive(:header)
+        expect(template).to receive(:header_content)
         template.draw_header
       end
     end
@@ -89,29 +89,29 @@ module ThousandIsland
         subject.draw_footer
       end
 
-      it 'does not call footer if not exists' do
-        expect(subject).to_not receive(:footer)
+      it 'does not call footer_content if not exists' do
+        expect(subject).to_not receive(:footer_content)
         subject.draw_footer
       end
 
-      it 'calls footer when it exists' do
-        described_class.send(:define_method, :footer) {}
+      it 'calls footer_content when it exists' do
+        described_class.send(:define_method, :footer_content) {}
         template = described_class.new
-        expect(template).to receive(:footer)
+        expect(template).to receive(:footer_content)
         template.draw_footer
       end
     end
 
     context 'Body' do
       it 'does not call body if not exists' do
-        expect(subject).to_not receive(:body)
+        expect(subject).to_not receive(:body_content)
         subject.draw_footer
       end
 
       it 'calls body when it exists' do
-        described_class.send(:define_method, :body) {}
+        described_class.send(:define_method, :body_content) {}
         template = described_class.new
-        expect(template).to receive(:body)
+        expect(template).to receive(:body_content)
         template.draw_body
       end
     end
