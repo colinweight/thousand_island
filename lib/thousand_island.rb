@@ -12,6 +12,8 @@ require "thousand_island/components/header"
 require "thousand_island/components/footer"
 require "thousand_island/components/body"
 
+require "thousand_island/utilities/utilities"
+
 module ThousandIsland
   Error = Class.new(StandardError)
   TemplateRequiredError = Class.new(Error)

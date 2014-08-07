@@ -11,8 +11,9 @@
 #  * 'just' rspec: 'rspec'
 guard :rspec, cmd: 'bundle exec rspec -f doc' do
   watch(%r{^spec/.+_spec\.rb$})
-  watch(%r{^lib/(.+)\.rb$})     { |m| "spec/thousand_island/#{m[1]}_spec.rb" }
+  watch(%r{^lib/(.+)\.rb$})     { |m| "spec/#{m[1]}_spec.rb" }
   watch(%r{^lib/thousand_island/(.+)\.rb$})     { |m| "spec/thousand_island/#{m[1]}_spec.rb" }
+  watch(%r{^lib/thousand_island/utilities/(.+)\.rb$})     { |m| "spec/thousand_island/utilities/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }
 
   # Turnip features and steps
