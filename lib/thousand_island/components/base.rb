@@ -4,8 +4,8 @@ module ThousandIsland
 
       attr_reader :pdf, :options
 
-      def initialize(pdf, options={})
-        @options = defaults.merge(options)
+      def initialize(pdf, args=nil)
+        @options = args || self.defaults
         @pdf = pdf
       end
 
@@ -28,7 +28,7 @@ module ThousandIsland
       end
 
       def repeated?
-        raise NotImplementedError
+        false
       end
 
       def self.defaults
@@ -38,8 +38,6 @@ module ThousandIsland
       def defaults
         self.class.defaults
       end
-
-
     end
   end
 end

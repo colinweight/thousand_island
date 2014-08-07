@@ -38,7 +38,7 @@ module ThousandIsland
         pdf.bounding_box([start, 0], width: col2_width, height: options[:height]) do
           options[:style].each do |k,v|
             pdf.send(k, v) if pdf.respond_to?(k)
-          end
+          end if options[:style]
           yield if block_given?
         end
       end
@@ -63,14 +63,14 @@ module ThousandIsland
           height: 33,
           top_padding: 20,
           repeated: true,
-          numbering_options: numbering_options,
+          numbering_options: default_numbering_options,
           number_pages: true,
           numbering_string: '<page>',
           style: {},
         }
       end
 
-      def self.numbering_options
+      def self.default_numbering_options
         {
           align: :right,
           start_count_at: 1,

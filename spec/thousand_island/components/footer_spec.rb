@@ -25,12 +25,10 @@ module ThousandIsland
 
       end
 
-
       context 'interactions with Prawn' do
 
         before :each do
           allow(prawn_doc).to receive(:bounding_box).and_yield
-          allow(bounds).to receive(:height) { std_doc_height }
           allow(bounds).to receive(:width) { std_doc_width }
           allow(prawn_doc).to receive(:bounds) { bounds }
           allow(prawn_doc).to receive(:number_pages)

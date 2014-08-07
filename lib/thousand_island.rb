@@ -10,10 +10,11 @@ require "thousand_island/components"
 require "thousand_island/components/base"
 require "thousand_island/components/header"
 require "thousand_island/components/footer"
+require "thousand_island/components/body"
 
 module ThousandIsland
-  class Error < StandardError; end
-  class TemplateRequiredError < Error; end
+  Error = Class.new(StandardError)
+  TemplateRequiredError = Class.new(Error)
 end
 
 KIsland = ThousandIsland
