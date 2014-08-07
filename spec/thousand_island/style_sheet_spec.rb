@@ -1,6 +1,11 @@
 module ThousandIsland
   describe StyleSheet do
 
+    let(:expected_styles) {  [:h1, :h2, :h3, :h4, :h5, :h6, :body, :footer] }
+
+    it 'builds the available styles array' do
+      expect(subject.available_styles).to match_array(expected_styles)
+    end
 
     it 'merges body_style with custom for h1' do
       expected = {

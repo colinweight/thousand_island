@@ -24,6 +24,10 @@ module ThousandIsland
       }
     end
 
+    def body_defaults
+      defaults
+    end
+
     def h1_defaults
       defaults.merge({
           size: defaults[:size] * 2.5,
@@ -81,6 +85,7 @@ module ThousandIsland
         styles: [defaults[:style]],
       })
     end
+
 
     #Create a method for each of the known styles from the defaults
     instance_methods.grep(/_defaults$/).each do |method_name|
