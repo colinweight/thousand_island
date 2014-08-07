@@ -16,7 +16,6 @@ module ThousandIsland
         {
           height: 33,
           bottom_padding: 20,
-          title: '',
           repeated: true
         }
       end
