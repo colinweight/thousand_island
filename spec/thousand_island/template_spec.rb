@@ -6,18 +6,20 @@ module ThousandIsland
 
       it 'sets the options with merged defaults and passed options' do
         options = { op_one: 1, op_two: 2 }
-        allow(subject).to receive(:defaults) { { op_two: 22, op_three: 3 } }
-        subject.setup_document_options(options)
-        expected = { op_one: 1, op_two: 2, op_three: 3 }
-        expect(subject.pdf_options).to eq(expected)
+        defaults = subject.send(:defaults)
+        component_defaults = subject.send(:component_defaults)
+        deep_merger = ThousandIsland::Utilities::DeepMerge
+        expect(deep_merger).to receive(:merge_options).with(options, [], defaults, component_defaults)
+        subject.send(:setup_document_options, options)
+      end
+
+      it 'method missing' do
+        expect{ subject.made_up_method }.to raise_error(NoMethodError)
       end
 
     end
 
     context 'Style Sheet' do
-      it 'is the default' do
-        expect(subject.style_sheet).to be_a(StyleSheet)
-      end
       context 'adds method to template' do
         it 'h1' do
           expect(subject.respond_to?(:h1)).to be true
@@ -31,9 +33,6 @@ module ThousandIsland
           expect(subject.respond_to?(:h3)).to be true
         end
 
-        it 'h3_style' do
-          expect(subject.respond_to?(:h3_style)).to be true
-        end
       end
 
       it 'adds text to the pdf' do
@@ -74,6 +73,18 @@ module ThousandIsland
         expect(template).to receive(:header_content)
         template.draw_header
       end
+
+      describe 'calculates space' do
+        it 'on when rendering' do
+          subject.pdf_options[:header][:height] = 30
+          subject.pdf_options[:header][:bottom_padding] = 10
+          expect(subject.send(:header_space)).to eq(40)
+        end
+        it 'on when not rendering' do
+          subject.pdf_options[:header][:render] = false
+          expect(subject.send(:header_space)).to eq(0)
+        end
+      end
     end
 
     context 'Footer' do
@@ -100,12 +111,31 @@ module ThousandIsland
         expect(template).to receive(:footer_content)
         template.draw_footer
       end
+
+      describe 'calculates space' do
+        it 'on when rendering' do
+          subject.pdf_options[:footer][:height] = 30
+          subject.pdf_options[:footer][:top_padding] = 10
+          expect(subject.send(:footer_space)).to eq(40)
+        end
+        it 'on when not rendering' do
+          subject.pdf_options[:footer][:render] = false
+          expect(subject.send(:footer_space)).to eq(0)
+        end
+      end
     end
 
     context 'Body' do
+      let(:body) { instance_double('ThousandIsland::Components::Body') }
+
+      before :each do
+        allow(body).to receive(:draw)
+        allow(subject).to receive(:body_obj) { body }
+      end
+
       it 'does not call body if not exists' do
         expect(subject).to_not receive(:body_content)
-        subject.draw_footer
+        subject.draw_body
       end
 
       it 'calls body when it exists' do
