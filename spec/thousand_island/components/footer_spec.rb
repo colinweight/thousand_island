@@ -36,7 +36,7 @@ module ThousandIsland
 
         it 'sizes the box' do
           h = footer.options[:height]
-          expect(prawn_doc).to receive(:bounding_box).with([0, 0], width: std_doc_width, height: h)
+          expect(prawn_doc).to receive(:bounding_box).with([0, h], width: std_doc_width, height: h)
           footer.render
         end
 

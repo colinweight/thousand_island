@@ -16,7 +16,6 @@ module ThousandIsland
       end
     end
 
-
     def initialize(data={})
     end
 
@@ -34,32 +33,45 @@ module ThousandIsland
 
     def draw_header
       template.draw_header do
-        header if respond_to? :header
+        header_content if self.respond_to? :header_content
       end
     end
 
     def draw_body
       template.draw_body do
-        body if respond_to? :body
+        body_content if respond_to? :body_content
       end
     end
 
     def draw_footer
       template.draw_footer do
-        footer if respond_to? :footer
+        footer_content if respond_to? :footer_content
       end
     end
 
-    def defaults
+    def settings
       {}
     end
 
     def template
       @template ||= begin
-        template = self.class.template_klass.new(self.defaults)
+        template = self.class.template_klass.new(settings)
         @pdf = template.pdf
         template
       end
+    end
+
+    #Respond to methods that relate to the style_sheet known styles
+    def method_missing(method_name, *arguments, &block)
+      if template.available_styles.include?(method_name)
+        template.send(method_name, *arguments)
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(method_name, *)
+      template.available_styles.include?(method_name) || super
     end
 
   end

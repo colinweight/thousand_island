@@ -50,6 +50,19 @@ module ThousandIsland
           end
         end
       end
+
+      it 'raises on render' do
+        expect{ component.render }.to raise_error(NotImplementedError)
+      end
+
+      it 'gets class defaults for instance' do
+        expect(component.defaults).to eq(described_class.defaults)
+      end
+
+      it 'defaults to not repeated?' do
+        expect(component.repeated?).to be false
+      end
+
     end
   end
 end

@@ -11,7 +11,7 @@ module ThousandIsland
       end
 
       def render(&block)
-        pdf.bounding_box([0, 0], width: pdf.bounds.width, height: options[:height]) do
+        pdf.bounding_box([0, box_height], width: pdf.bounds.width, height: box_height) do
           col1
           col2(&block)
           col3
@@ -35,7 +35,7 @@ module ThousandIsland
 
       def col2
         start = col1_width
-        pdf.bounding_box([start, 0], width: col2_width, height: options[:height]) do
+        pdf.bounding_box([start, box_height], width: col2_width, height: box_height) do
           options[:style].each do |k,v|
             pdf.send(k, v) if pdf.respond_to?(k)
           end if options[:style]
@@ -45,9 +45,13 @@ module ThousandIsland
 
       def col3
         start = col1_width + col2_width
-        pdf.bounding_box([start, 0], width: col3_width, height: options[:height]) do
+        pdf.bounding_box([start, box_height], width: col3_width, height: box_height) do
           pdf.number_pages numbering_string, numbering_options if number_pages?
         end
+      end
+
+      def box_height
+        options[:height]
       end
 
       def numbering_options
