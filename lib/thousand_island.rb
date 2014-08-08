@@ -13,6 +13,7 @@ require "thousand_island/components/footer"
 require "thousand_island/components/body"
 
 require "thousand_island/utilities/utilities"
+require "thousand_island/utilities/style_hash"
 
 module ThousandIsland
   Error = Class.new(StandardError)
