@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start
+
 require 'thousand_island'
 
 RSpec.configure do |config|
