@@ -22,7 +22,7 @@ module ThousandIsland
     end
 
     it 'gets style value for the styles key' do
-      expect(subject[:styles]).to eq(2)
+      expect(subject[:styles]).to eq([2])
     end
 
   end

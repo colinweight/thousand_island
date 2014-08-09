@@ -36,7 +36,7 @@ module ThousandIsland
       end
       it 'styles' do
         style = subject.h3_style
-        expect(style[:styles]).to eq(style[:style])
+        expect(style[:styles]).to eq([style[:style]])
       end
     end
 
