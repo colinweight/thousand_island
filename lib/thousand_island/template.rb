@@ -1,4 +1,94 @@
 module ThousandIsland
+  # The Template class is where you can define elements that may be common to
+  # all (or some) documents within your application. It is likely that a common
+  # style will be required, so defining it in a Template and then using that
+  # Template subclass in any custom Builders DRYs up your pdf generation, as
+  # well as allowing for easy restyling across the whole application.
+  #
+  # Typically, the Template subclass would define the settings for the PrawnDocument,
+  # as well as the settings for the header and footer. See the Docs below for the
+  # <code>settings</code> method for the defaults. Add your own or override any
+  # existing settings in the <code>settings</code> method. Any options passed into
+  # the constructor as a Hash will be merged with these settings, and the defaults.
+  #
+  # Content for the header and footer will be defined in the methods
+  # <code>header_content</code> and <code>footer_content</code>. These methods are
+  # passed as a block when the pdf is rendered. Any standard Prawn methods may be
+  # used (including bounding boxes or any other layout tools). In addition, any
+  # of the styles from the <code>StyleSheet</code> can be applied as helper methods.
+  # For instance, the default style sheet has a <code>h1_style</code> method that
+  # returns a  ThousandIsland::StyleHash, so in your code you can use:
+  #   h1 "My Document Header"
+  # and Prawn will render the text in the style set in the <code>h1_style</code>
+  # ThousandIsland::StyleHash.
+  #
+  # In addition to the supplied style methods, you can create a custom method:
+  #   def magic_style
+  #     ThousandIsland::StyleHash.new({
+  #       size: 15
+  #       style: bold
+  #     })
+  #   end
+  # As long as the method ends in the word "_style" and returns a Hash, you magically
+  # get to do this:
+  #   magic "My magic text that is bold and size 15!!"
+  # The method may return a standard Hash, but it is safer to return a
+  # ThousandIsland::StyleHash, as this dynamically duplicates a few keys to accommodate
+  # using the style in normal Prawn text methods as well as formatted text boxes, which
+  # use a slightly different convention. You don't have to worry about that if you use
+  # the ThousandIsland::StyleHash.
+  #
+  # Alternatively, your method could do this:
+  #   def magic_style
+  #     h1_style.merge({
+  #       size: 15
+  #       style: bold
+  #     })
+  #   end
+  #
+  # The following is an example of a custom template that subclasses
+  # ThousandIsland::Template -
+  #
+  #   class MyTemplate < ThousandIsland::Template
+  #     include MyCustomStyleSheet # optional
+  #
+  #     def settings
+  #       {
+  #         header: {
+  #           height: 55,
+  #           render:true,
+  #         },
+  #         footer: {
+  #           render:true,
+  #           height: 9,
+  #           numbering_string: 'Page <page> of <total>'
+  #         },
+  #       }
+  #     end
+  #
+  #     def header_content
+  #       pdf.image "#{pdf_images_path}/company_logo.png", height: 30  # Standard Prawn syntax
+  #     end
+  #
+  #     def footer_content
+  #       footer "www.mycompanyurl.com"  # Using the magic method we get from the footer_style
+  #     end
+  #
+  #     def pdf_images_path
+  #       "#{Rails.root}/app/assets/pdf_images"  # This is entirely up to you
+  #     end
+  #   end
+  #
+  # Nb.
+  # The Footer is a three column layout, with the numbering on the right column
+  # and the content defined here in the middle. More flexibility will be added
+  # in a later version.
+  #
+  # Optional:
+  #
+  # Add a <code>body_content</code> method to add content before whatever the
+  # Builder defines in it's method of the same name.
+  #
   class Template
     include ThousandIsland::StyleSheet
 
