@@ -12,10 +12,11 @@ module ThousandIsland
       it 'method instantiates a new instance of the template_class' do
         klass = described_class.dup
         template = double(:template)
+        allow(template).to receive(:available_styles) {[]}
         expect(template).to receive(:new).with({}) { template }
         expect(template).to receive(:pdf) {}
         klass.uses_template(template)
-        klass.new.template
+        klass.new.send(:template)
       end
     end
 
@@ -37,15 +38,15 @@ module ThousandIsland
           it 'header_content' do
             # allow(builder).to receive(:header_content)
             expect(builder).to receive(:header_content)
-            builder.draw_header
+            builder.send(:draw_header)
           end
           it 'body_content' do
             expect(builder).to receive(:body_content)
-            builder.draw_body
+            builder.send(:draw_body)
           end
           it 'footer_content' do
             expect(builder).to receive(:footer_content)
-            builder.draw_footer
+            builder.send(:draw_footer)
           end
         end
         context 'does not exist' do
