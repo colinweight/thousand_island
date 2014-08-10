@@ -19,5 +19,3 @@ module ThousandIsland
   Error = Class.new(StandardError)
   TemplateRequiredError = Class.new(Error)
 end
-
-KIsland = ThousandIsland
