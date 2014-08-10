@@ -3,7 +3,7 @@ module ThousandIsland
   # be included into other modules to define custom StyleSheets.
   #
   # Methods should return a StyleHash object rather than a vanilla Hash, as it
-  # has some customisation to help it work with Prawn. The default_sttyle is
+  # has some customisation to help it work with Prawn. The default_style is
   # used as the starting point for all other styles. For instance, the
   # <code>default_style[:size]</code> value is multiplied in the heading styles,
   # so changing the default style size value will have a cascading effect. Check

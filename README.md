@@ -3,6 +3,8 @@
 
 [Prawn](https://github.com/prawnpdf/prawn) is awesome. It has some amazing functionality, and you can get anything that's in your head onto a PDF document with some Ruby code. For me though, as wonderful as that is, I normally only need a repeating header and footer, and then some text and maybe a table in between them. This is where **Thousand Island** comes in. A few simple commands should get you set up with a template that you can use application wide, and then all you need to worry about is getting the right content into the document.
 
+> Note: ThousandIsland is not meant to be a substitute for learning Prawn, you will get more out of it if you do. The excellent [Prawn Manual](http://prawnpdf.org/manual.pdf) is a great place to start.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -19,72 +21,189 @@ Or install it yourself as:
 
 ## Usage
 
-### Initialise
-The following commands will create the default structure for a Rails app:
+ThousandIsland uses the following classes to get the job done:
 
-    $ thousand_island init
+**ThousandIsland::Template** - The common layout and formatting for your pdfs live in here
 
-    # or the shorter version:
+**ThousandIsland::Builder** - Subclass the Builder for your actual business logic for the pdf itself
 
-    $ k_island init
-    $ k_island init
-If you're *not* using Rails, then run:
+**ThousandIsland::StyleSheet** - A mixin for defining common styles to be used by your Template
 
-    $ k_island init --rails=false
-
-> Nb. Use `k_island` and `thousand_island` interchangeably. Clarity is good, less typing is good, here you have both options.
-
-The directory structure for a Rails app is as follows:
+A suggested directory structure for a Rails app is as follows, but it's entirely up to you:
 
 ```
 app/
 └── pdf_builders/
-    ├── .keep
-    ├── support/
-    │   └── .keep
+	├── my_builder.rb
     └── templates/
-        └── .keep
+		├── my_template.rb  
+		├── my_style_sheet.rb
 ```
-For a non-Rails application, the `lib` directory is used instead of the `app` directory.
-
-The intended use of each of the directories is:
-
-* **app/pdf_builders/** - Your main classes that generate the actual pdf file go in this directory
-* **app/pdf_builders/templates** - The template files that are reused and contain the style information belong here
-* **app/pdf_builders/support** - This is where you can keep files that are used to generate your PDFs. Things like image files for the company logo, custom icons, that sort of thing. You don't have to keep them here if you don't want to.
-
-If you don't run the `init` command, the folders will be created when a template or builder is generated, unless a different path is specified (see below)
+For a non-Rails application, the `lib` directory can be used instead of the `app` directory., but it's all up to you.
 
 ### Creating a Template
 
-You'll need a starting point for your PDF documents. It's likely (but not enforced!) that you'll create a template for the entire application, which ensures a consistent style across all PDFs your application creates. Running:
+The Template class is where you can define elements that may be common to all (or some) documents within your application. It is likely that a common style will be required, so defining it in a Template and then using that Template subclass in any custom Builders DRYs up your pdf generation, as well as allowing for easy restyling across the whole application.
 
-    $ thousand_island template my_template
+Typically, the Template subclass would define the settings for the PrawnDocument, as well as the settings for the header and footer. See the Docs below for the `settings` method for the defaults. Add your own or override any existing settings in the `settings` method. Any options passed into the constructor as a Hash will be merged with these settings, and the defaults.
 
-    # or the shorter version:
+Content for the header and footer will be defined in the methods `header_content` and `footer_content`. These methods are passed as a block when the pdf is rendered. Any standard Prawn methods may be used (including bounding boxes or any other layout tools). In addition, any of the styles from the `StyleSheet` can be applied as helper methods. For instance, the default style sheet has a `h1_style` method that returns a  ThousandIsland::StyleHash, so in your code you can use:
+```ruby
+  h1 "My Document Header"
+```
+and Prawn will render the text in the style set in the `h1_style` ThousandIsland::StyleHash.
+In addition to the supplied style methods, you can create a custom method:
+```ruby
+  def magic_style
+    ThousandIsland::StyleHash.new({
+      size: 15
+      style: bold
+    })
+  end
+```
+As long as the method ends in the word "_style" and returns a Hash, you magically get to do this:
 
-    $ k_island template my_template
-will create a file that has some commented options with defaults and explanations for how you can style your template. The default path to the file is `app/pdf_builders/templates/my_template.rb`
+```ruby
+  magic "My magic text is bold and size 15!!"
+```
 
-You may also specify a custom path, if you don't like the defaults. For instance:
+The method may return a standard Hash, but it is safer to return a ThousandIsland::StyleHash, as this dynamically duplicates a few keys to accommodate using the style in normal Prawn text methods as well as formatted text boxes, which use a slightly different convention. You don't have to worry about that if you use the ThousandIsland::StyleHash.
 
-    $ k_island template my_template --path=lib/pdf_templates
+Alternatively, your method could do this:
+```ruby
+  def magic_style
+    h1_style.merge({
+      size: 15
+      style: bold
+    })
+  end
+```
+The following is an example of a custom template that subclasses
+ThousandIsland::Template -
+```ruby
+  class MyTemplate < ThousandIsland::Template
+    include MyCustomStyleSheet # optional
 
+    # settings here are merged with and override the defaults
+    def settings
+      {
+        header: {
+          height: 55,
+          render:true,
+          repeated: true
+        },
+        footer: {
+          render:true,
+          height: 9,
+          numbering_string: 'Page <page> of <total>',
+          repeated: true
+        }
+      }
+    end
 
-Have a look at the file and the commented defaults. Here's where you set the basic layout for your header and footer. Anything set here can also be overridden by a PDF generator that uses this template.
+    def header_content
+      # Standard Prawn syntax
+      pdf.image "#{pdf_images_path}/company_logo.png", height: 30
+    end
+
+    def footer_content
+      # Using the magic method we get from the footer_style
+      footer "www.mycompanyurl.com"
+    end
+
+    def pdf_images_path
+      # How you go about this sort of thing is entirely up to you
+	  "#{Rails.root}/app/assets/pdf_images"
+    end
+  end
+```
+>Nb. The Footer is a three column layout, with the numbering on the right column and the content defined here in the middle. More flexibility will be added in a later version.
+
+Optional:
+Add a `body_content` method to add content before whatever the Builder defines in it's method of the same name.
+
+### StyleSheets
+
+The StyleSheet is designed to be a mixin to the Template class. It may also be included into other modules to define custom StyleSheets.
+
+Methods should return a StyleHash object rather than a vanilla Hash, as it has some customisation to help it work with Prawn. The default_style is used as the starting point for all other styles. For instance, the `default_style[:size]` value is multiplied in the heading styles, so changing the default style size value will have a cascading effect. Check the source for the default values and override as preferred.
+
+An example of a custom StyleSheet:
+```ruby
+  module MyStyleSheet
+    include ThousandIsland::StyleSheet
+    
+    def default_style
+      super.merge({
+        size: 12,
+        color: '222222'
+      })
+    end
+    
+    def h1_style
+      super.merge({ align: :center })
+    end
+  end
+```
 
 ### Creating a Builder
 
-The class that is used to build the final will be generated by the command:
+Your Builder class is where you will put the necessary logic for rendering the final pdf. It's up to you how you get the data into the Builder. It will depend on the complexity. You might just pass an Invoice object (`MyBuilder.new(invoice))`) or you may have a bunch of methods that are called by an external object to get the data where it needs to be.
 
-    $ k_island builder my_builder
-The file path will be `app/pdf_builders/my_builder.rb`, unless you use the `path=` option (see 'Creating a Template')
+You must declare which Template class you will be using. Failing to do so will raise a `TemplateRequiredError` when you call the build method. Declare the template with the following in the main class body:
+```ruby
+  uses_template MyTemplate
+```
 
-As with the template, check out the comments and defaults in the new file itself.
+Your Builder can have a `filename` method, which will help a Rails Controller or other class determine the name to use to send the file to the browser or save to the filesystem (or both). Without this method it will have a default name, so you may choose to put the naming logic for your file elsewhere, it's up to you.
 
-The builder needs to be given data, and this will be rendered by the `body` method. This is where you will do most of the work, as the `body` method is empty to begin with.
+You must have a `body_content` method that takes no arguments (or the pdf will be empty!). This is the method that is passed around internally in order for Prawn to render what is in the method. You can use raw Prawn syntax, or any of the style magic methods to render to the pdf. You may also call other methods from your `body_content` method, and use Prawn syntax and magic methods in those too. 
 
-### Using the Builder in a Rails Application
+A Builder example might be:
+```ruby
+  class MyBuilder < ThousandIsland::Builder
+    uses_template MyTemplate
+  
+    attr_reader :data
+    
+    def initialize(data={})
+      @data = data
+      # do something with the data...
+    end
+    
+    def filename
+      "Document#{data.id_number}"
+    end
+    
+    def body_content
+      # call custom methods, magic methods or call Prawn methods directly:
+      h1 'Main Heading'
+      display_info
+      body 'Main text in here...'
+    end
+    
+    # Custom method called by body_content
+    def display_info
+      body "Written by: #{data.author}"
+      pdf.image data.avatar, height: 20
+    end
+  end
+```
+
+Finally, to get the finished pdf from your Builder, call the `build` method like so:
+```ruby
+  pdf = my_builder.build
+```
+
+Optional:
+
+Define a `header_content` method to add content below whatever is defined in the Template. This will be repeated according to the header settings in the Template.
+
+Define a `footer_content` method to add content above whatever is defined in the Template. This will be repeated according to the footer settings in the Template.
+
+Define a `settings` method that returns a Hash. This will be passed to the Template class and will override any of the Template default settings.
+
+#### Using the Builder in a Rails Application
 
 Your Controller can look something like this:
 
@@ -94,7 +213,7 @@ def show
     respond_to do |format|
       format.html
       format.pdf do
-        data = { thing: @thing }  # nb. How you structure this is up to you, it's your Class!!
+        data = { thing: @thing }  # How you structure this is up to you, it's your Class!!
         builder = MyBuilder.new(data)
         send_data builder.build, filename: builder.filename,
           type: "application/pdf",
@@ -113,16 +232,31 @@ def show
         @thing_for_html_view = Thing.find(params[:id])
       end
       format.pdf do
-        builder = ThingServiceObject.new(params) # The service object does it's thing and returns the Builder
-        send_data builder.build, filename: builder.filename,
-          type: "application/pdf",
-          disposition: "inline" # Leave blank to render as a download
+      	# Tell the service object to do it's thing and return the Builder
+        builder = ThingPdfServiceObject.new(params)
+        send_data builder.build,
+              filename: builder.filename,
+              type: "application/pdf",
+              disposition: "inline" # Leave blank to render as a download
       end
     end
   end
 ```
 
-These are only suggestions, as you can probably tell there is nothing tying you down to a particular way of building and delivering the document. You might even want to save it to the file system, or upload to S3. There is nothing stopping you from doing that, whether you do it by customizing the `build` method, or by uploading in a background task after rendering to the browser.
+These are only suggestions, as you can probably tell there is nothing tying you down to a particular way of building and delivering the document. You might even want to save it to the file system, or upload to S3. You could override the build method if you wanted to:
+```ruby
+  def build
+  	pdf = super
+    # Save, upload, send or do whatever....
+  end
+```
+However, that kind of logic seems beyond the scope of the Builder, and should proabably be in the consumer of your Builder class, rather than the builder itself.
+
+## To come...
+- Easy (and repeatable) Table formatting
+- Easy list rendering and styling (including nested lists)
+- More flexibility in the Footer layout
+- (Possibly) Command line functions to create common subclass files 
 
 ## Contributing
 

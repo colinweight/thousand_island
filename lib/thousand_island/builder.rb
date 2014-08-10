@@ -1,28 +1,36 @@
 module ThousandIsland
-  # The Builder class is where the specific business logic for the pdf resides. Subclasses
-  # of the ThousandIsland::Builder class may organise the data however they want to.
-  # Subclasses are required to add a <code>uses_template <i>MyTemplateClass</i></code>
-  # declaration in the Class body.
+  # Your Builder class is where you will put the necessary logic for
+  # rendering the final pdf. It's up to you how you get the data into
+  # the Builder. It will depend on the complexity. You might just pass
+  # an Invoice object (<code>MyBuilder.new(invoice))</code>) or you may have a
+  # bunch of methods that are called by an external object to get the
+  # data where it needs to be.
   #
-  # Define a <code>filename</code> method that returns a string you might use to name
-  # the file.
+  # You must declare which Template class you will be using. Failing
+  # to do so will raise a <code>TemplateRequiredError</code> when you call the
+  # build method. Declare the template with the following in the main
+  # class body:
   #
-  # The main body of the pdf document should be defined in a method called
-  # <code>body_content</code>, that takes no arguments. Any values that need to be
-  # accessed by the method should be declared as attributes are returned from other
-  # methods (any method in the class has access to the <code>pdf</code> variable).
-  # The <code>body_content</code> method is actually passed as a block behind the
-  # scenes, to ensure it is rendered according to the <code>Template</code> and
-  # <code>StyleSheet</code> settings.
+  #   uses_template MyTemplate
   #
-  # Call the <code>build</code> method on the instance, which will return the pdf
-  # string as rendered by Prawn.
+  # Your Builder can have a <code>filename</code> method, which will help a Rails
+  # Controller or other class determine the name to use to send the
+  # file to the browser or save to the filesystem (or both). Without
+  # this method it will have a default name, so you may choose to put
+  # the naming logic for your file elsewhere, it's up to you.
   #
-  # The following is an example of a custom builder that subclasses
-  # ThousandIsland::Builder -
+  # You must have a <code>body_content</code> method that takes no arguments (or
+  # the pdf will be empty!). This is the method that is passed around
+  # internally in order for Prawn to render what is in the method.
+  # You can use raw Prawn syntax, or any of the style magic methods
+  # to render to the pdf. You may also call other methods from your
+  # <code>body_content</code> method, and use Prawn syntax and magic methods in
+  # those too.
+  #
+  #  A Builder example might be:
   #
   #   class MyBuilder < ThousandIsland::Builder
-  #     uses_template ThousandIsland::Template # or most likely a custom template
+  #     uses_template MyTemplate
   #
   #     attr_reader :data
   #
@@ -32,36 +40,36 @@ module ThousandIsland
   #     end
   #
   #     def filename
-  #       "Invoice Number #{data[:invoice].number}"
+  #       "Document#{data.id_number}"
   #     end
   #
   #     def body_content
-  #       # call custom methods that call methods on the pdf object (which is a Prawn::Document)
-  #       # or call Prawn methods directly:
-  #       pdf.text 'I can use this just like a raw Prawn'
-  #
-  #       # or use any of the style based helper methods
-  #
-  #       h4 'A sub heading'
-  #       body 'Some text for the body of the pdf document'
+  #       # call custom methods, magic methods or call Prawn methods directly:
+  #       h1 'Main Heading'
+  #       display_info
+  #       body 'Main text in here...'
   #     end
   #
+  #     # Custom method called by body_content
+  #     def display_info
+  #       body "Written by: #{data.author}"
+  #       pdf.image data.avatar, height: 20
+  #     end
   #   end
+  #
+  #
+  # Finally, to get the finished pdf from your Builder, call the <code>build</code> method like so:
+  #
+  #   pdf = my_builder.build
+  #
   #
   # Optional:
   #
-  # Add a <code>header_content</code> method to add content below whatever is defined
-  # in the Template. This will be repeated according to the header settings in the
-  # Template.
+  # Define a <code>header_content</code> method to add content below whatever is defined in the Template. This will be repeated according to the header settings in the Template.
   #
-  # Add a <code>footer_content</code> method to add content above whatever is defined
-  # in the Template. This will be repeated according to the footer settings in the
-  # Template.
+  # Define a <code>footer_content</code> method to add content above whatever is defined in the Template. This will be repeated according to the footer settings in the Template.
   #
-  # Define a <code>settings</code> method that returns a Hash. This will be passed
-  # to the Template class and will override any of the Template default settings.
-  #
-  #
+  # Define a <code>settings</code> method that returns a Hash. This will be passed to the Template class and will override any of the Template default settings.
   class Builder
 
     attr_reader :pdf
@@ -79,7 +87,7 @@ module ThousandIsland
       end
     end
 
-    def initialize(data={})
+    def initialize(data=nil)
     end
 
     def filename

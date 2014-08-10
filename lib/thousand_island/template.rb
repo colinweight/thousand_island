@@ -31,7 +31,7 @@ module ThousandIsland
   #   end
   # As long as the method ends in the word "_style" and returns a Hash, you magically
   # get to do this:
-  #   magic "My magic text that is bold and size 15!!"
+  #   magic "My magic text is bold and size 15!!"
   # The method may return a standard Hash, but it is safer to return a
   # ThousandIsland::StyleHash, as this dynamically duplicates a few keys to accommodate
   # using the style in normal Prawn text methods as well as formatted text boxes, which
@@ -52,17 +52,20 @@ module ThousandIsland
   #   class MyTemplate < ThousandIsland::Template
   #     include MyCustomStyleSheet # optional
   #
+  #     # settings here are merged with and override the defaults
   #     def settings
   #       {
   #         header: {
   #           height: 55,
   #           render:true,
+  #           repeated: true
   #         },
   #         footer: {
   #           render:true,
   #           height: 9,
-  #           numbering_string: 'Page <page> of <total>'
-  #         },
+  #           numbering_string: 'Page <page> of <total>',
+  #           repeated: true
+  #         }
   #       }
   #     end
   #
