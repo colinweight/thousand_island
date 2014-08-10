@@ -39,13 +39,13 @@ app/
 		├── my_template.rb  
 		├── my_style_sheet.rb
 ```
-For a non-Rails application, the `lib` directory can be used instead of the `app` directory., but it's all up to you.
+For a non-Rails application, the `lib` directory can be used instead of the `app` directory, but it's all up to you.
 
 ### Creating a Template
 
 The Template class is where you can define elements that may be common to all (or some) documents within your application. It is likely that a common style will be required, so defining it in a Template and then using that Template subclass in any custom Builders DRYs up your pdf generation, as well as allowing for easy restyling across the whole application.
 
-Typically, the Template subclass would define the settings for the PrawnDocument, as well as the settings for the header and footer. See the Docs below for the `settings` method for the defaults. Add your own or override any existing settings in the `settings` method. Any options passed into the constructor as a Hash will be merged with these settings, and the defaults.
+Typically, the Template subclass would define the settings for the Prawn Document, as well as the settings for the header and footer. Add your own or override any existing settings in the `settings` method. Any options passed into the constructor as a Hash will be merged with these settings, and the defaults.
 
 Content for the header and footer will be defined in the methods `header_content` and `footer_content`. These methods are passed as a block when the pdf is rendered. Any standard Prawn methods may be used (including bounding boxes or any other layout tools). In addition, any of the styles from the `StyleSheet` can be applied as helper methods. For instance, the default style sheet has a `h1_style` method that returns a  ThousandIsland::StyleHash, so in your code you can use:
 ```ruby
@@ -223,7 +223,7 @@ def show
   end
 ```
 
-If your controller for getting the data for a PDF is that simple, then you're pretty lucky. Normally we're going to want a PDF file to render a few things at once, so you might build a service object that formats the data as follows:
+If your controller for getting the data for a PDF is that simple, then you're pretty lucky. Normally we're going to want a PDF file to render a few things at once, so you might build a service object that formats the data, and use as follows:
 
 ```ruby
 def show
