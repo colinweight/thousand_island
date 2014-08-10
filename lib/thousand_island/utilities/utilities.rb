@@ -1,13 +1,16 @@
 module ThousandIsland
   module Utilities
 
-
     module DeepMerge
 
-      #Take an array of hashes and merge them into one, respecting
+      #Take a number of hashes and merge them into one, respecting
       # the structure and nesting according to the pdf options hash.
       # Hashes work in order of precedence, the first in the array
       # overrides, the second, etc.
+      #
+      # @param hashes [*Hash] A number of hashes to merge, in the order of precedence
+      #
+      # @return [Hash] the merged values
       def self.merge_options(*hashes)
         hashes.reverse!
         merged = {}
