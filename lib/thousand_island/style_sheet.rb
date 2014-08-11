@@ -46,7 +46,7 @@ module ThousandIsland
 
     def h1_style
       default_style.merge({
-          size: default_style[:size] * 2.5,
+          size: default_style[:size] * 1.8,
           style: :bold,
           leading: 8,
       })
@@ -54,29 +54,32 @@ module ThousandIsland
 
     def h2_style
       default_style.merge({
-          size: default_style[:size] * 2.14,
+          size: default_style[:size] * 1.5,
           style: :bold,
-          leading: 2,
+          leading: 4,
       })
     end
 
     def h3_style
       default_style.merge({
-          size: default_style[:size] * 1.7,
+          size: default_style[:size] * 1.4,
           style: :bold,
+          leading: 4,
       })
     end
 
     def h4_style
       default_style.merge({
-          size: default_style[:size] * 1.3,
+          size: default_style[:size] * 1.1,
           style: :bold_italic,
+          leading: 4,
       })
     end
 
     def h5_style
       default_style.merge({
           size: default_style[:size] * 1,
+          leading: 4,
       })
     end
 
@@ -84,6 +87,7 @@ module ThousandIsland
       default_style.merge({
           size: default_style[:size] * 0.85,
           style: :italic,
+          leading: 4,
       })
     end
 
@@ -92,7 +96,7 @@ module ThousandIsland
          size: default_style[:size] * 0.8,
          color: '666666',
          align: :center,
-     })
+      })
     end
 
     available_styles = []
