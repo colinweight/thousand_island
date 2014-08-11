@@ -2,7 +2,7 @@ module ThousandIsland
   describe StyleSheet do
     let(:subject) do
       dummy = Class.new
-      dummy.include(described_class)
+      dummy.send(:include, described_class)
       dummy.new
     end
     let(:expected_styles) {  [:h1, :h2, :h3, :h4, :h5, :h6, :body, :footer] }
