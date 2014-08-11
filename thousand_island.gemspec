@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["colin@colinweight.com.au"]
   spec.description   = %q{Dressing for Prawn}
   spec.summary       = %q{A library that helps with common layout elements in PDFs.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/colinweight/thousand_island"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
