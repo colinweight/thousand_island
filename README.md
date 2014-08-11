@@ -117,7 +117,7 @@ ThousandIsland::Template -
     end
   end
 ```
->Nb. The Footer is a three column layout, with the numbering on the right column and the content defined here in the middle. More flexibility will be added in a later version.
+>Note: The Footer is a three column layout, with the numbering on the right column and the content defined here in the middle. More flexibility will be added in a later version.
 
 Optional:
 Add a `body_content` method to add content before whatever the Builder defines in it's method of the same name.
@@ -251,6 +251,99 @@ These are only suggestions, as you can probably tell there is nothing tying you 
   end
 ```
 However, that kind of logic seems beyond the scope of the Builder, and should proabably be in the consumer of your Builder class, rather than the builder itself.
+
+## Default Styles
+Out of the box, ThousandIsland gives you some generic styles with default values. Override any of the values in your custom Stylesheet, or your Template. Create your own entirely new style in either of those places too, and get the magic method for free.
+
+The default styles are:
+##### body
+```ruby
+{
+  :size => 10, # Inherited from default_style
+  :style => :normal, # Inherited from default_style
+  :align => :left, # Inherited from default_style
+  :leading => 1, # Inherited from default_style
+  :inline_format => true, # Inherited from default_style
+  :color => "000000" # Inherited from default_style
+}
+```
+##### h1
+```ruby
+{
+  :size => 18, # Calcuated as 1.8 * default_style[:size]
+  :style => :bold,
+  :align => :left, # Inherited from default_style
+  :leading => 8,
+  :inline_format => true, # Inherited from default_style
+  :color => "000000" # Inherited from default_style
+}
+```
+##### h2
+```ruby
+{
+  :size => 15, # Calcuated as 1.5 * default_style[:size]
+  :style => :bold,
+  :align => :left, # Inherited from default_style
+  :leading => 4,
+  :inline_format => true, # Inherited from default_style
+  :color => "000000" # Inherited from default_style
+}
+```
+##### h3
+```ruby
+{
+  :size => 14, # Calcuated as 1.4 * default_style[:size]
+  :style => :bold,
+  :align => :left, # Inherited from default_style
+  :leading => 4,
+  :inline_format => true, # Inherited from default_style
+  :color => "000000" # Inherited from default_style
+}
+```
+##### h4
+```ruby
+{
+  :size => 11, # Calcuated as 1.1 * default_style[:size]
+  :style => :bold_italic,
+  :align => :left, # Inherited from default_style
+  :leading => 4,
+  :inline_format => true, # Inherited from default_style
+  :color => "000000" # Inherited from default_style
+}
+```
+##### h5
+```ruby
+{
+  :size => 10, # Calcuated as 1 * default_style[:size]
+  :style => :normal, # Inherited from default_style
+  :align => :left, # Inherited from default_style
+  :leading => 4,
+  :inline_format => true, # Inherited from default_style
+  :color => "000000" # Inherited from default_style
+}
+```
+##### h6
+```ruby
+{
+  :size => 8.5, # Calcuated as 0.85 * default_style[:size]
+  :style => :italic,
+  :align => :left, # Inherited from default_style
+  :leading => 4,
+  :inline_format => true, # Inherited from default_style
+  :color => "000000" # Inherited from default_style
+}
+```
+##### footer
+```ruby
+{
+  :size => 0.8, # Calcuated as 0.8 * default_style[:size]
+  :style => :normal,
+  :align => :left, # Inherited from default_style
+  :leading => 1, # Inherited from default_style
+  :inline_format => true, # Inherited from default_style
+  :color => "666666"
+}
+```
 
 ## To come...
 - Easy (and repeatable) Table formatting

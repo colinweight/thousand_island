@@ -19,7 +19,7 @@ module ThousandIsland
 
     it 'merges body_style with custom for h1' do
       expected = {
-          size: 10 * 2.5,
+          size: 10 * 1.8,
           style: :bold,
           align: :left,
           leading: 8,
