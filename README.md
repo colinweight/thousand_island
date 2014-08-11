@@ -1,5 +1,5 @@
 # Thousand Island
-### Dressing for Prawn
+** Dressing for Prawn **
 
 [![Gem Version](https://badge.fury.io/rb/thousand_island.svg)](http://badge.fury.io/rb/thousand_island) [![Code Climate](https://codeclimate.com/github/colinweight/thousand_island/badges/gpa.svg)](https://codeclimate.com/github/colinweight/thousand_island) [![Test Coverage](https://codeclimate.com/github/colinweight/thousand_island/badges/coverage.svg)](https://codeclimate.com/github/colinweight/thousand_island) [![Build Status](https://travis-ci.org/colinweight/thousand_island.svg?branch=master)](https://travis-ci.org/colinweight/thousand_island) [![Inline docs](http://inch-ci.org/github/colinweight/thousand_island.png?branch=master)](http://inch-ci.org/github/colinweight/thousand_island)
 
