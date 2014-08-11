@@ -1,6 +1,9 @@
 # Thousand Island
 **Dressing for Prawn**
 
+[![GitHub version](https://badge.fury.io/gh/colinweight%2Fthousand_island.png)](http://badge.fury.io/gh/colinweight%2Fthousand_island)  ![Build Status](https://travis-ci.org/colinweight/thousand_island.svg?branch=master)
+
+
 [Prawn](https://github.com/prawnpdf/prawn) is awesome. It has some amazing functionality, and you can get anything that's in your head onto a PDF document with some Ruby code. For me though, as wonderful as that is, I normally only need a repeating header and footer, and then some text and maybe a table in between them. This is where **Thousand Island** comes in. A few simple commands should get you set up with a template that you can use application wide, and then all you need to worry about is getting the right content into the document.
 
 > Note: ThousandIsland is not meant to be a substitute for learning Prawn, you will get more out of it if you do. The excellent [Prawn Manual](http://prawnpdf.org/manual.pdf) is a great place to start.
