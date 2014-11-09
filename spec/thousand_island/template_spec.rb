@@ -8,7 +8,7 @@ module ThousandIsland
         options = { op_one: 1, op_two: 2 }
         defaults = subject.send(:defaults)
         component_defaults = subject.send(:component_defaults)
-        deep_merger = ThousandIsland::Utilities::DeepMerge
+        deep_merger = ThousandIsland::Utilities::DeepMerge::TemplateOptions
         expect(deep_merger).to receive(:merge_options).with(options, [], defaults, component_defaults)
         subject.send(:setup_document_options, options)
       end
@@ -16,7 +16,6 @@ module ThousandIsland
       it 'method missing' do
         expect{ subject.made_up_method }.to raise_error(NoMethodError)
       end
-
     end
 
     context 'Style Sheet' do

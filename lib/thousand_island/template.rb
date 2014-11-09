@@ -237,7 +237,7 @@ module ThousandIsland
 
 
     def deep_merger
-      @deep_merger ||= Utilities::DeepMerge
+      @deep_merger ||= Utilities::DeepMerge::TemplateOptions
     end
 
     # Called by method missing when a style is supplied with text, ie: h1 'Header'
