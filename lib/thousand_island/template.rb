@@ -181,13 +181,13 @@ module ThousandIsland
     end
 
     def header_space
-      return (pdf_options[:header][:height] + pdf_options[:header][:bottom_padding]) if pdf_options[:header][:render]
-      0
+      return 0 unless pdf_options[:header][:render]
+      pdf_options[:header][:height] + pdf_options[:header][:bottom_padding]
     end
 
     def footer_space
-      return (pdf_options[:footer][:height] + pdf_options[:footer][:top_padding]) if pdf_options[:footer][:render]
-      0
+      return 0 unless pdf_options[:footer][:render]
+      pdf_options[:footer][:height] + pdf_options[:footer][:top_padding]
     end
 
 
