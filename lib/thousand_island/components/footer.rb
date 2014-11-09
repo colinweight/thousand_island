@@ -36,9 +36,7 @@ module ThousandIsland
       def col2
         start = col1_width
         pdf.bounding_box([start, box_height], width: col2_width, height: box_height) do
-          options[:style].each do |k,v|
-            pdf.send(k, v) if pdf.respond_to?(k)
-          end if options[:style]
+          inject_style
           yield if block_given?
         end
       end
@@ -60,6 +58,10 @@ module ThousandIsland
 
       def repeated?
         options[:repeated]
+      end
+
+      def inject_style
+        options[:style].each { |k,v| pdf.send(k, v) if pdf.respond_to?(k) } if options[:style]
       end
 
       def self.defaults
