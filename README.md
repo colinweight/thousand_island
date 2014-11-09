@@ -229,7 +229,7 @@ def show
 If your controller for getting the data for a PDF is that simple, then you're pretty lucky. Normally we're going to want a PDF file to render a few things at once, so you might build a service object that formats the data, and use as follows:
 
 ```ruby
-def show
+  def show
     respond_to do |format|
       format.html do
         @thing_for_html_view = Thing.find(params[:id])
@@ -255,6 +255,87 @@ These are only suggestions, as you can probably tell there is nothing tying you 
 ```
 However, that kind of logic seems beyond the scope of the Builder, and should proabably be in the consumer of your Builder class, rather than the builder itself.
 
+## Tables
+
+Quite often a pdf will need to render tabular data. It makes sense if there is a common table styling for all PDFs in your application (although it's not compulsory!). Thousand Island has a Table class, and a TableStyle class.
+
+> Note: **Thousand Island** has been designed to handle the most common scenarios, and therefore cannot cover every possibility and still keep it simple. If there's anything you can't do with a ThousandIsland::Table, you may need to use Prawn's standard table rendering. There's nothing stopping your Builder rendering a table without using any of the Table implementation in **Thousand Island**. Check out the [Prawn Table Manual](http://prawnpdf.org/prawn-table-manual.pdf) for the full capabilities.
+
+### Creating a Table
+There are three main components of a table, header body and footer
+#### Header
+Header rows are optional. By doing nothing, your table will have no header row/s. To have a header in your table, you have several options:
+```ruby
+  # Straightforward single row, no builder logic required
+  header_rows = [['Column One', 'Column Two', 'Column Three']]
+    
+  # Build gradually (You can use Prawn native syntax for span and formatting)
+  header_rows << [{content: 'First Two Columns', colspan: 2}, 'Third']
+  header_rows << ['Column One', 'Column Two', 'Column Three']
+    
+```
+
+By default **Thousand Island** takes all the rows in the <code>header_rows</code> and formats them as a repeating header. If you don't want a header, don't put anything in <code>header_rows</code>. If you don't want the header to repeat across pages, then set:
+```ruby
+  header_repeat: false
+```
+in either the <code>settings</code> method (which returns a hash specific to this Table class) or by setting it in you TableSettings custom class.
+
+#### Body
+Similar to <code>header_rows</code>, <code>body_rows</code> can be set in one go or build gradually. Given the nature of the content of a table, it is more likely you'll have a method in that iterates through a collection of objects and builds the table according to the requirements.
+The way you build the Array of nested Array for the body is up to you. Three suggestions:
+
+- **Simple Data**: Simply set the <code>body_rows</code> as an Array of Arrays anywhere that's convenient
+- **Slightly Complex**: Iterate over a collection craeting and Array of "cellable" objects for Prawn, and add to <code>body_rows</code> as you go (<code>body_rows << newly_built_row</code>). You can do this in your Builder and pass it to the Table, or pass objects from your Builder to your Table so that the Table can deal with it.
+- **Complex Real Life**: Create a ServiceObject that knows everything it needs to know about how to build the rows. In some situations, a table row might need to represent multiple objects and the logic may be complex. Keeping the row building away from your Builder or Table classess keeps things simple.
+
+#### Footer
+Works in the same way as the header, except you use <code>footer_rows</code>. The only difference is that the footer does not repeat.
+
+#### Table Options
+A PrawnTable is very configurable. The goal of the Table component of **Thousand Island** is to make the configuration reusable throughout your application. There is a TableSettings class (see below) that you can subclass and use as a configuration object, but you can also override those settings for a specific table by setting a compatible Hash in your Table class like so:
+```ruby
+  def settings
+    {
+      header_repeat: false
+    }
+  end
+```
+
+### Table Settings
+You can use the defaults, or create your own <code>TableSettings</code> class as below:
+```ruby
+  class MyTableSettings
+    def table_options
+      {...}
+    end
+  end
+```
+All the settings in the <code>table_options</code> Hash will be merged with the defaults and made available to any Table that uses your custom TableSettings class.
+
+To get one of your Table subclasses to use your custom TableSettings subclass, do the following:
+```ruby
+  class MyTable < ThousandIsland::Table
+    uses_settings MyTableSettings
+    
+    ...
+    
+  end
+```
+
+### Using Tables in your Builder
+Anywhere in your Builder, you can do:
+```ruby
+  table = table_with MyTable
+```
+This initialises the Table class and gets it ready to build the body rows. You can then use it where appropriate to render the table in your PDF document:
+```ruby
+  table.draw
+  
+  # To override any of the settins either in the table or the TableSettings being used, just pass them as a Hash to the draw method:
+  table.draw(header_repeat: false)
+```
+
 ## Default Styles
 Out of the box, ThousandIsland gives you some generic styles with default values. Override any of the values in your custom Stylesheet, or your Template. Create your own entirely new style in either of those places too, and get the magic method for free.
 
@@ -262,94 +343,117 @@ The default styles are:
 ##### body
 ```ruby
 {
-  :size => 10, # Inherited from default_style
-  :style => :normal, # Inherited from default_style
-  :align => :left, # Inherited from default_style
-  :leading => 1, # Inherited from default_style
-  :inline_format => true, # Inherited from default_style
-  :color => "000000" # Inherited from default_style
+  size: 10, # Inherited from default_style
+  style: :normal, # Inherited from default_style
+  align: :left, # Inherited from default_style
+  leading: 1, # Inherited from default_style
+  inline_format: true, # Inherited from default_style
+  color: "000000" # Inherited from default_style
 }
 ```
 ##### h1
 ```ruby
 {
-  :size => 18, # Calcuated as 1.8 * default_style[:size]
-  :style => :bold,
-  :align => :left, # Inherited from default_style
-  :leading => 8,
-  :inline_format => true, # Inherited from default_style
-  :color => "000000" # Inherited from default_style
+  size: 18, # Calcuated as 1.8 * default_style[:size]
+  style: :bold,
+  align: :left, # Inherited from default_style
+  leading: 8,
+  inline_format: true, # Inherited from default_style
+  color: "000000" # Inherited from default_style
 }
 ```
 ##### h2
 ```ruby
 {
-  :size => 15, # Calcuated as 1.5 * default_style[:size]
-  :style => :bold,
-  :align => :left, # Inherited from default_style
-  :leading => 4,
-  :inline_format => true, # Inherited from default_style
-  :color => "000000" # Inherited from default_style
+  size: 15, # Calcuated as 1.5 * default_style[:size]
+  style: :bold,
+  align: :left, # Inherited from default_style
+  leading: 4,
+  inline_format: true, # Inherited from default_style
+  color: "000000" # Inherited from default_style
 }
 ```
 ##### h3
 ```ruby
 {
-  :size => 14, # Calcuated as 1.4 * default_style[:size]
-  :style => :bold,
-  :align => :left, # Inherited from default_style
-  :leading => 4,
-  :inline_format => true, # Inherited from default_style
-  :color => "000000" # Inherited from default_style
+  size: 14, # Calcuated as 1.4 * default_style[:size]
+  style: :bold,
+  align: :left, # Inherited from default_style
+  leading: 4,
+  inline_format: true, # Inherited from default_style
+  color: "000000" # Inherited from default_style
 }
 ```
 ##### h4
 ```ruby
 {
-  :size => 11, # Calcuated as 1.1 * default_style[:size]
-  :style => :bold_italic,
-  :align => :left, # Inherited from default_style
-  :leading => 4,
-  :inline_format => true, # Inherited from default_style
-  :color => "000000" # Inherited from default_style
+  size: 11, # Calcuated as 1.1 * default_style[:size]
+  style: :bold_italic,
+  align: :left, # Inherited from default_style
+  leading: 4,
+  inline_format: true, # Inherited from default_style
+  color: "000000" # Inherited from default_style
 }
 ```
 ##### h5
 ```ruby
 {
-  :size => 10, # Calcuated as 1 * default_style[:size]
-  :style => :normal, # Inherited from default_style
-  :align => :left, # Inherited from default_style
-  :leading => 4,
-  :inline_format => true, # Inherited from default_style
-  :color => "000000" # Inherited from default_style
+  size: 10, # Calcuated as 1 * default_style[:size]
+  style: :normal, # Inherited from default_style
+  align: :left, # Inherited from default_style
+  leading: 4,
+  inline_format: true, # Inherited from default_style
+  color: "000000" # Inherited from default_style
 }
 ```
 ##### h6
 ```ruby
 {
-  :size => 8.5, # Calcuated as 0.85 * default_style[:size]
-  :style => :italic,
-  :align => :left, # Inherited from default_style
-  :leading => 4,
-  :inline_format => true, # Inherited from default_style
-  :color => "000000" # Inherited from default_style
+  size: 8.5, # Calcuated as 0.85 * default_style[:size]
+  style: :italic,
+  align: :left, # Inherited from default_style
+  leading: 4,
+  inline_format: true, # Inherited from default_style
+  color: "000000" # Inherited from default_style
 }
 ```
 ##### footer
 ```ruby
 {
-  :size => 0.8, # Calcuated as 0.8 * default_style[:size]
-  :style => :normal,
-  :align => :left, # Inherited from default_style
-  :leading => 1, # Inherited from default_style
-  :inline_format => true, # Inherited from default_style
-  :color => "666666"
+  size: 0.8, # Calcuated as 0.8 * default_style[:size]
+  style: :normal,
+  align: :left, # Inherited from default_style
+  leading: 1, # Inherited from default_style
+  inline_format: true, # Inherited from default_style
+  color: "666666"
 }
 ```
+## Default Table Settings
+Override any of these settings (or the nested settings) using the following techniques (in order of precedence):
 
+- Builder: <code>table.draw(_your_hash_)</code>
+- Table class: <code>settings</code> method that returns a hash
+- TableSettings class: <code>table_settings</code> method that returns a hash
+
+### The full list of defaults
+```ruby
+{
+  position: :center,
+  width: pdf.bounds.width,   # Equates to full page width
+  cell_style: {
+    borders: [:top, :bottom],
+    border_width: 0.5,
+    inline_format: true,
+    size: 10
+  },
+  header_repeat: true,
+  header_format: {
+    align: :center,
+    font_style: :bold
+  }
+}
+```
 ## To come...
-- Easy (and repeatable) Table formatting
 - Easy list rendering and styling (including nested lists)
 - More flexibility in the Footer layout
 - (Possibly) Command line functions to create common subclass files 

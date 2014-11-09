@@ -29,14 +29,10 @@ module ThousandIsland
 
         before :each do
           allow(builder).to receive(:template) { template }
-          # klass.send(:define_method, :header_content, ->{})
-          # klass.send(:define_method, :body_content, ->{})
-          # klass.send(:define_method, :footer_content, ->{})
         end
         context 'exists' do
 
           it 'header_content' do
-            # allow(builder).to receive(:header_content)
             expect(builder).to receive(:header_content)
             builder.send(:draw_header)
           end
@@ -100,6 +96,12 @@ module ThousandIsland
             builder.h1 'text'
           end
         end
+      end
+
+      it 'table_with instantiates the class' do
+        dummy_table = double
+        expect(dummy_table).to receive(:new).with(subject.pdf)
+        subject.table_with dummy_table
       end
     end
   end

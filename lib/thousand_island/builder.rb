@@ -107,6 +107,10 @@ module ThousandIsland
       {}
     end
 
+    def table_with(klass)
+      klass.new(pdf)
+    end
+
   private
 
     def draw_header
