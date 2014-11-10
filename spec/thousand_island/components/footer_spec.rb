@@ -42,7 +42,7 @@ module ThousandIsland
 
         it 'renders the page numbers' do
           expect(prawn_doc).to receive(:number_pages).with(footer.numbering_string, footer.options[:numbering_options])
-          footer.render
+          footer.after_render
         end
 
       end
