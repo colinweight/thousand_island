@@ -305,7 +305,7 @@ A PrawnTable is very configurable. The goal of the Table component of **Thousand
 ### Table Settings
 You can use the defaults, or create your own <code>TableSettings</code> class as below:
 ```ruby
-  class MyTableSettings
+  class MyTableSettings < ThousandIsland::TableSettings
     def table_options
       {...}
     end
