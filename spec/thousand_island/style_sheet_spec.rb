@@ -7,10 +7,6 @@ module ThousandIsland
     end
     let(:expected_styles) {  [:h1, :h2, :h3, :h4, :h5, :h6, :body, :footer] }
 
-    it 'builds the available styles array' do
-      expect(subject.available_styles).to match_array(expected_styles)
-    end
-
     it 'has a style method for every style' do
       expected_styles.each do |s|
         expect(subject.send("#{s}_style")).to be_a(StyleHash)

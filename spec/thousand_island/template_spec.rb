@@ -145,5 +145,18 @@ module ThousandIsland
       end
     end
 
+
+    describe 'magic methods' do
+      it 'gets added to the available styles' do
+        class DummyTemplate < ThousandIsland::Template
+          include ThousandIsland::StyleSheet
+          def added_style; end
+        end
+        dummy = DummyTemplate.new
+        expect(dummy.available_styles).to include(:added)
+      end
+
+    end
+
   end
 end

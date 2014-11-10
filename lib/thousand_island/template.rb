@@ -98,6 +98,7 @@ module ThousandIsland
     attr_reader :pdf, :pdf_options
 
     def initialize(options={})
+      setup_available_styles
       setup_document_options(options)
       setup_prawn_document
       calculate_bounds
@@ -153,6 +154,10 @@ module ThousandIsland
         yield if block_given?
         footer_content &block if respond_to? :footer_content
       end if render_footer?
+    end
+
+    def available_styles
+      @available_styles ||= []
     end
 
   private
@@ -234,8 +239,6 @@ module ThousandIsland
       @body ||= body_klass.new(pdf, pdf_options[:body])
     end
 
-
-
     def deep_merger
       @deep_merger ||= Utilities::DeepMerge::TemplateOptions
     end
@@ -275,6 +278,15 @@ module ThousandIsland
     def respond_to_missing?(method_name, *)
       available_styles.include?(method_name) || super
     end
+
+    def setup_available_styles
+      self.class.instance_methods.grep(/_style$/).each do |method_name|
+        style = method_name.to_s.sub('_style', '')
+        available_styles << style.to_sym unless style == 'default'
+      end
+      available_styles.flatten!
+    end
+
 
   end
 end

@@ -99,14 +99,5 @@ module ThousandIsland
       })
     end
 
-    available_styles = []
-    instance_methods.grep(/_style$/).each do |method_name|
-      style = method_name.to_s.sub('_style', '')
-      available_styles << style.to_sym unless style == 'default'
-    end
-    define_method(:available_styles) do
-      available_styles
-    end
-
   end
 end
