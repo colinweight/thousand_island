@@ -15,6 +15,11 @@ module ThousandIsland
         else
           render &block
         end
+        after_render
+      end
+
+      def after_render
+        nil
       end
 
       def render_all(&block)

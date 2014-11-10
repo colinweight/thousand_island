@@ -14,8 +14,12 @@ module ThousandIsland
         pdf.bounding_box([0, box_height], width: pdf.bounds.width, height: box_height) do
           col1
           col2(&block)
-          col3
+          # col3
         end
+      end
+
+      def after_render
+        col3
       end
 
       def col1_width
