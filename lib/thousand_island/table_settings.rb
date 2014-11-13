@@ -16,7 +16,7 @@ module ThousandIsland
     end
 
     def settings
-      default_options.merge(table_settings.merge(overrides))
+      deep_merger.merge_options(overrides, table_settings, default_options)
     end
 
     def default_options
@@ -53,6 +53,11 @@ module ThousandIsland
       }
     end
 
+    private
+
+    def deep_merger
+      @deep_merger ||= Utilities::DeepMerge::TableOptions
+    end
 
   end
 end
