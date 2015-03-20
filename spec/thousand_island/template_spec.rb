@@ -9,7 +9,7 @@ module ThousandIsland
         defaults = subject.send(:defaults)
         component_defaults = subject.send(:component_defaults)
         deep_merger = ThousandIsland::Utilities::DeepMerge::TemplateOptions
-        expect(deep_merger).to receive(:merge_options).with(options, [], defaults, component_defaults)
+        expect(deep_merger).to receive(:merge_options).with(options, {}, defaults, component_defaults)
         subject.send(:setup_document_options, options)
       end
 
